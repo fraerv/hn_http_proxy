@@ -6,13 +6,14 @@ import re
 
 PORT = 8232
 BASE_URL = "http://news.ycombinator.com"
+SIX_LETTERS_WORDS_RE = re.compile(r"(?<!\w)(\w{6})(?!\w)")
 
 
 def add_tm_symbol(source):
-    return re.sub(r"(?<!\w)(\w{6})(?!\w)", r"\1™", source)
+    return SIX_LETTERS_WORDS_RE.sub(r"\1™", source)
 
 
-class MyProxy(SimpleHTTPRequestHandler):
+class HnProxy(SimpleHTTPRequestHandler):
     def do_GET(self):
         url = BASE_URL + self.path
         response = urlopen(url)
@@ -35,6 +36,6 @@ class MyProxy(SimpleHTTPRequestHandler):
 
 if __name__ == "__main__":
 
-    with TCPServer(("", PORT), MyProxy) as server:
+    with TCPServer(("", PORT), HnProxy) as server:
         print("serving at ", PORT)
         server.serve_forever()
