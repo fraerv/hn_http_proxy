@@ -20,7 +20,8 @@ class HnProxy(SimpleHTTPRequestHandler):
 
         self.send_response(response.status)
         for header in list(response.headers):
-            self.send_header(header, response.headers.get(header))
+            if header not in ["Server", "Date", "Transfer-Encoding"]:
+                self.send_header(header, response.headers.get(header))
         self.end_headers()
         if response.headers.get_content_type() != "text/html":
             self.wfile.write(response.read())
